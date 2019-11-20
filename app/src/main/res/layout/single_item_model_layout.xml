@@ -72,12 +72,12 @@
                     android:visibility="gone"
                     android:id="@+id/repo_details_layout"
                     android:layout_marginTop="10dp">
-                    <View
+                    <ImageView
                         android:layout_width="10dp"
                         android:layout_height="10dp"
                         android:id="@+id/circle_view"
                         android:layout_centerVertical="true"
-                        android:background="@drawable/circular_shape"/>
+                        android:src="@drawable/circular_shape"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

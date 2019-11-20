@@ -2,10 +2,7 @@ package com.example.githubsampleapplication.di.component
 
 import android.app.Application
 import com.example.githubsampleapplication.GithubSampleApplication
-import com.example.githubsampleapplication.di.module.ActivityBuilderModule
-import com.example.githubsampleapplication.di.module.ApiModule
-import com.example.githubsampleapplication.di.module.AppModule
-import com.example.githubsampleapplication.di.module.ViewModelFactoryModule
+import com.example.githubsampleapplication.di.module.*
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjector
@@ -17,7 +14,7 @@ import javax.inject.Singleton
 @Singleton
 @Component(
     modules = [AndroidSupportInjectionModule::class, ActivityBuilderModule::class,
-        AppModule::class, ApiModule::class, ViewModelFactoryModule::class]
+        AppModule::class, ApiModule::class,DatabaseModule::class, ViewModelFactoryModule::class]
 )
 interface AppComponent : AndroidInjector<GithubSampleApplication> {
 

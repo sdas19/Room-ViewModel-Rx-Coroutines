@@ -1,6 +1,8 @@
 package com.example.githubsampleapplication
 
 import android.content.Context
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +14,7 @@ import com.example.githubsampleapplication.model.RepositoryResponseModel
 class RepoAdapter(val context : Context, val repoList : List<RepositoryResponseModel>)
     : RecyclerView.Adapter<RepoAdapter.RepoViewHolder>() {
 
-    private var checkedPosition = 0
+    private var checkedPosition = -1
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RepoViewHolder{
         val binding : SingleItemModelLayoutBinding = DataBindingUtil.inflate(
@@ -29,6 +31,10 @@ class RepoAdapter(val context : Context, val repoList : List<RepositoryResponseM
     override fun onBindViewHolder(holder: RepoViewHolder,position : Int){
         val repo = repoList[position]
         holder.itemModelLayoutBinding.repo = repo
+        if(!repo.languageColor.isNullOrEmpty())
+        holder.itemModelLayoutBinding.circleView.drawable.setColorFilter(Color.parseColor(repo.languageColor),PorterDuff.Mode.MULTIPLY)
+        //holder..setColorFilter(0xff00ff00, PorterDuff.Mode.MULTIPLY );
+
         if (checkedPosition == position) {
             holder.itemModelLayoutBinding.repoDetailsTextview.visibility = View.VISIBLE
             holder.itemModelLayoutBinding.repoDetailsLayout.visibility = View.VISIBLE
@@ -40,6 +46,10 @@ class RepoAdapter(val context : Context, val repoList : List<RepositoryResponseM
             if (checkedPosition != position) {
                 notifyDataSetChanged();
                 checkedPosition = position;
+            }else{
+                holder.itemModelLayoutBinding.repoDetailsTextview.visibility = View.GONE
+                holder.itemModelLayoutBinding.repoDetailsLayout.visibility = View.GONE
+                checkedPosition = -1
             }
         }
     }

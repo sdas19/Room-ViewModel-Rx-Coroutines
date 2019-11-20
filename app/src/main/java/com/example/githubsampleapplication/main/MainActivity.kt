@@ -1,5 +1,6 @@
 package com.example.githubsampleapplication.main
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -8,6 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.githubsampleapplication.Factory.ViewModelFactory
 import com.example.githubsampleapplication.R
 import com.example.githubsampleapplication.RepoAdapter
@@ -24,6 +26,7 @@ class MainActivity : DaggerAppCompatActivity() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     private lateinit var shimmerFrameLayout: ShimmerFrameLayout
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private val TAG = MainActivity::class.java.simpleName
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,21 +39,31 @@ class MainActivity : DaggerAppCompatActivity() {
             DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
         )
         shimmerFrameLayout = findViewById(R.id.shimmer_view_container)
+        swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout)
+
         mainActivityViewModel =
             ViewModelProviders.of(this, viewModelFactory).get(MainActivityViewModel::class.java)
 
-        mainActivityViewModel.dataResponse.observe(this, Observer {
+        mainActivityViewModel.getRepoFromDb().observe(this, Observer {
 
-            shimmerFrameLayout.stopShimmerAnimation();
-            shimmerFrameLayout.visibility = View.GONE;
             Log.d(TAG, it.toString())
             if (!it.isNullOrEmpty()) {
+                shimmerFrameLayout.stopShimmerAnimation();
+                shimmerFrameLayout.visibility = View.GONE;
                 val adapter = RepoAdapter(this@MainActivity, it)
                 adapter.setHasStableIds(true)
                 binding.repoRecyclerview.adapter = adapter
-            }
+            }else
+                mainActivityViewModel.makeRepoApiCall()
+
 
         })
+
+        swipeRefreshLayout.setOnRefreshListener {
+            mainActivityViewModel.makeRepoApiCall()
+            swipeRefreshLayout.isRefreshing = false
+
+        }
     }
 
     public override fun onResume() {

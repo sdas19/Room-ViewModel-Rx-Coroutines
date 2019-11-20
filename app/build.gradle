@@ -54,5 +54,11 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:3.0.1'
     implementation 'com.squareup.picasso:picasso:2.71828'
 
+    // Room components
+    implementation 'android.arch.persistence.room:runtime:2.2.1'
+    kapt 'android.arch.persistence.room:compiler:2.2.1'
+
+    // RxJava support for Room
+    implementation 'android.arch.persistence.room:rxjava2:2.2.1'
 
 }
