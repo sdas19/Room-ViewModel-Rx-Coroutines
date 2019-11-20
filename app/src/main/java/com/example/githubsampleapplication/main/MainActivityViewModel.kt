@@ -5,7 +5,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.githubsampleapplication.ApiClient
-import com.example.githubsampleapplication.Model.RepositoryResponseModel
+import com.example.githubsampleapplication.model.RepositoryResponseModel
 import com.example.githubsampleapplication.addToDisposable
 import com.example.githubsampleapplication.removeAllDisposables
 import io.reactivex.android.schedulers.AndroidSchedulers

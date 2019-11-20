@@ -1,6 +1,11 @@
-package com.example.githubsampleapplication.Model
+package com.example.githubsampleapplication.model
 
 import com.google.gson.annotations.SerializedName
+import com.squareup.picasso.Picasso
+import androidx.databinding.BindingAdapter
+import com.example.githubsampleapplication.R
+import de.hdodenhof.circleimageview.CircleImageView
+
 
 data class RepositoryResponseModel(
     @SerializedName("author") var author: String,
