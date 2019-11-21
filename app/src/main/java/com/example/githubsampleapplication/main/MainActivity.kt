@@ -1,6 +1,5 @@
 package com.example.githubsampleapplication.main
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -10,13 +9,15 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.work.*
+import com.example.githubsampleapplication.DBCleanupWorker
 import com.example.githubsampleapplication.Factory.ViewModelFactory
 import com.example.githubsampleapplication.R
 import com.example.githubsampleapplication.RepoAdapter
 import com.example.githubsampleapplication.databinding.ActivityMainBinding
 import com.facebook.shimmer.ShimmerFrameLayout
 import dagger.android.support.DaggerAppCompatActivity
-import kotlinx.android.synthetic.main.activity_main.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
@@ -53,7 +54,7 @@ class MainActivity : DaggerAppCompatActivity() {
                 val adapter = RepoAdapter(this@MainActivity, it)
                 adapter.setHasStableIds(true)
                 binding.repoRecyclerview.adapter = adapter
-            }else
+            } else
                 mainActivityViewModel.makeRepoApiCall()
 
 
@@ -64,6 +65,10 @@ class MainActivity : DaggerAppCompatActivity() {
             swipeRefreshLayout.isRefreshing = false
 
         }
+
+        createWorkRequest()
+
+
     }
 
     public override fun onResume() {
@@ -74,5 +79,20 @@ class MainActivity : DaggerAppCompatActivity() {
     override fun onPause() {
         shimmerFrameLayout.stopShimmerAnimation()
         super.onPause()
+    }
+
+    private fun createWorkRequest() {
+
+        val periodicDbCleanUpRequest = PeriodicWorkRequest.Builder(
+            DBCleanupWorker::class.java, // Your worker class
+            2, // repeating interval
+            TimeUnit.HOURS
+        ).build()
+
+        WorkManager.getInstance(this@MainActivity).enqueueUniquePeriodicWork(
+            DBCleanupWorker::class.java.simpleName,
+            ExistingPeriodicWorkPolicy.KEEP,
+            periodicDbCleanUpRequest
+        )
     }
 }

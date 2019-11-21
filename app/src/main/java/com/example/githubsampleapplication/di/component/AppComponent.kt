@@ -1,6 +1,7 @@
 package com.example.githubsampleapplication.di.component
 
 import android.app.Application
+import com.example.githubsampleapplication.Factory.AppWorkerFactory
 import com.example.githubsampleapplication.GithubSampleApplication
 import com.example.githubsampleapplication.di.module.*
 import dagger.BindsInstance
@@ -14,7 +15,8 @@ import javax.inject.Singleton
 @Singleton
 @Component(
     modules = [AndroidSupportInjectionModule::class, ActivityBuilderModule::class,
-        AppModule::class, ApiModule::class,DatabaseModule::class, ViewModelFactoryModule::class]
+        AppModule::class, ApiModule::class,DatabaseModule::class,ViewModelFactoryModule::class,
+        AppAssistedInjectModule::class, WorkerBindingModule::class]
 )
 interface AppComponent : AndroidInjector<GithubSampleApplication> {
 
@@ -28,5 +30,8 @@ interface AppComponent : AndroidInjector<GithubSampleApplication> {
 
         fun build(): AppComponent
     }
+
+    fun factory(): AppWorkerFactory
+
 
 }

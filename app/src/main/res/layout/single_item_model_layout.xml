@@ -4,8 +4,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
         <variable name="repo" type="com.example.githubsampleapplication.model.RepositoryResponseModel"/>
-        <variable name="itemClickListener"
-            type="com.example.githubsampleapplication.RepoClickListener"/>
     </data>
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"

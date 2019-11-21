@@ -55,7 +55,7 @@ class RepoAdapter(val context : Context, val repoList : List<RepositoryResponseM
     }
 
     override fun getItemId(position: Int): Long {
-        return position.toLong()
+        return repoList[position].id.toLong()
     }
 
     inner class RepoViewHolder(val itemModelLayoutBinding: SingleItemModelLayoutBinding)
