@@ -27,4 +27,5 @@ data class RepositoryResponseModel(
     @SerializedName("currentPeriodStars") @ColumnInfo(name = "currentPeriodStars")  var currentPeriodStars: Int?,
     @TypeConverters(BuiltByTypeConverter::class)
     @SerializedName("builtBy") @ColumnInfo(name = "builtBy")  var builtBy: List<BuiltByResponseModel>?
+
 )

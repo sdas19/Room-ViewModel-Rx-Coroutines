@@ -19,4 +19,5 @@ interface RepoDao {
 
     @Query("DELETE FROM Repo")
     fun deleteAll()
+
 }

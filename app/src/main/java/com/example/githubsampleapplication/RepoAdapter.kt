@@ -3,6 +3,7 @@ package com.example.githubsampleapplication
 import android.content.Context
 import android.graphics.Color
 import android.graphics.PorterDuff
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,11 +11,15 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.githubsampleapplication.databinding.SingleItemModelLayoutBinding
 import com.example.githubsampleapplication.model.RepositoryResponseModel
+import io.reactivex.Completable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
-class RepoAdapter(val context : Context, val repoList : List<RepositoryResponseModel>)
+class RepoAdapter(val context : Context,val repoList : List<RepositoryResponseModel>)
     : RecyclerView.Adapter<RepoAdapter.RepoViewHolder>() {
 
     private var checkedPosition = -1
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RepoViewHolder{
         val binding : SingleItemModelLayoutBinding = DataBindingUtil.inflate(
@@ -43,6 +48,7 @@ class RepoAdapter(val context : Context, val repoList : List<RepositoryResponseM
             holder.itemModelLayoutBinding.repoDetailsLayout.visibility = View.GONE
         }
         holder.itemModelLayoutBinding.root.setOnClickListener{
+
             if (checkedPosition != position) {
                 notifyDataSetChanged();
                 checkedPosition = position;

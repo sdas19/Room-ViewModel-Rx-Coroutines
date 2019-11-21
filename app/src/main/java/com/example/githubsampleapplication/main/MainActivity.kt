@@ -3,6 +3,8 @@ package com.example.githubsampleapplication.main
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Button
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -14,6 +16,7 @@ import com.example.githubsampleapplication.DBCleanupWorker
 import com.example.githubsampleapplication.Factory.ViewModelFactory
 import com.example.githubsampleapplication.R
 import com.example.githubsampleapplication.RepoAdapter
+import com.example.githubsampleapplication.RepoDao
 import com.example.githubsampleapplication.databinding.ActivityMainBinding
 import com.facebook.shimmer.ShimmerFrameLayout
 import dagger.android.support.DaggerAppCompatActivity
@@ -26,8 +29,11 @@ class MainActivity : DaggerAppCompatActivity() {
     private lateinit var mainActivityViewModel: MainActivityViewModel
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
+
     private lateinit var shimmerFrameLayout: ShimmerFrameLayout
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    private lateinit var errorView : ConstraintLayout
+    private lateinit var retryButton : Button
     private val TAG = MainActivity::class.java.simpleName
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,6 +47,8 @@ class MainActivity : DaggerAppCompatActivity() {
         )
         shimmerFrameLayout = findViewById(R.id.shimmer_view_container)
         swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout)
+        errorView = findViewById(R.id.no_internet_view)
+        retryButton = findViewById(R.id.retry_button)
 
         mainActivityViewModel =
             ViewModelProviders.of(this, viewModelFactory).get(MainActivityViewModel::class.java)
@@ -51,6 +59,7 @@ class MainActivity : DaggerAppCompatActivity() {
             if (!it.isNullOrEmpty()) {
                 shimmerFrameLayout.stopShimmerAnimation();
                 shimmerFrameLayout.visibility = View.GONE;
+                swipeRefreshLayout.isRefreshing = false
                 val adapter = RepoAdapter(this@MainActivity, it)
                 adapter.setHasStableIds(true)
                 binding.repoRecyclerview.adapter = adapter
@@ -60,13 +69,30 @@ class MainActivity : DaggerAppCompatActivity() {
 
         })
 
+        mainActivityViewModel.errorOccured.observe(this, Observer {
+            shimmerFrameLayout.stopShimmerAnimation();
+            shimmerFrameLayout.visibility = View.GONE;
+            swipeRefreshLayout.isRefreshing = false
+
+            if(it){
+                errorView.visibility = View.VISIBLE
+            }else{
+                errorView.visibility = View.GONE
+            }
+        })
+
         swipeRefreshLayout.setOnRefreshListener {
             mainActivityViewModel.makeRepoApiCall()
             swipeRefreshLayout.isRefreshing = false
 
         }
 
-        createWorkRequest()
+        retryButton.setOnClickListener {
+            swipeRefreshLayout.isRefreshing = true
+            mainActivityViewModel.makeRepoApiCall()
+        }
+
+        createDbCleanupWorkRequest()
 
 
     }
@@ -81,7 +107,7 @@ class MainActivity : DaggerAppCompatActivity() {
         super.onPause()
     }
 
-    private fun createWorkRequest() {
+    private fun createDbCleanupWorkRequest() {
 
         val periodicDbCleanUpRequest = PeriodicWorkRequest.Builder(
             DBCleanupWorker::class.java, // Your worker class

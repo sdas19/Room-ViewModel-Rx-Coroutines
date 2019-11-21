@@ -49,5 +49,10 @@
                 android:adapter="@{repoAdapter}" >
             </androidx.recyclerview.widget.RecyclerView>
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        <include
+            android:id="@+id/no_internet_view"
+            android:visibility="gone"
+            layout="@layout/no_internet_layout">
+        </include>
     </RelativeLayout>
 </layout>

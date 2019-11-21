@@ -5,11 +5,8 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.githubsampleapplication.ApiClient
-import com.example.githubsampleapplication.RepoDao
+import com.example.githubsampleapplication.*
 import com.example.githubsampleapplication.model.RepositoryResponseModel
-import com.example.githubsampleapplication.addToDisposable
-import com.example.githubsampleapplication.removeAllDisposables
 import io.reactivex.Flowable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -21,6 +18,7 @@ class MainActivityViewModel
     @Inject constructor(val apiClient: ApiClient, val repoDao: RepoDao): ViewModel() {
 
     private val TAG = MainActivityViewModel::class.java.simpleName
+    internal var errorOccured = MutableLiveData<Boolean>().default(false)
 
     internal fun makeRepoApiCall(){
         addToDisposable(
@@ -30,8 +28,12 @@ class MainActivityViewModel
                     repoDao.insertAll(repoList)
                     Single.just(repoList)}
                 .subscribe(
-                    {list -> Log.i(TAG,list.toString())},
-                    { error -> Log.i(TAG,error?.message)}
+                    {list ->
+                        errorOccured.postValue(false)
+                        Log.i(TAG,list.toString())},
+                    { error ->
+                        errorOccured.postValue(true)
+                        Log.i(TAG,error?.message)}
                 )
         )
     }
