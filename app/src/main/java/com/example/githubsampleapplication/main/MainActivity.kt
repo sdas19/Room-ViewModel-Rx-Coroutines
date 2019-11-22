@@ -22,6 +22,12 @@ import com.facebook.shimmer.ShimmerFrameLayout
 import dagger.android.support.DaggerAppCompatActivity
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import android.view.LayoutInflater
+import androidx.appcompat.app.ActionBar
+import androidx.core.app.ComponentActivity.ExtraData
+import androidx.core.content.ContextCompat.getSystemService
+
+
 
 
 class MainActivity : DaggerAppCompatActivity() {
@@ -39,8 +45,10 @@ class MainActivity : DaggerAppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
         val binding =
             DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
+
         binding.repoRecyclerview.setLayoutManager(LinearLayoutManager(this));
         binding.repoRecyclerview.addItemDecoration(
             DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
