@@ -7,5 +7,5 @@ import retrofit2.http.GET
 interface ApiClient {
 
     @GET(Constants.repositoryUrlRouter)
-    fun getRepositoryResponse() : Single<List<RepositoryResponseModel>>
+    fun getRepositoryResponse(): Single<List<RepositoryResponseModel>>
 }

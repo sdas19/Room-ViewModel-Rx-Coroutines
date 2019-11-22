@@ -12,7 +12,7 @@ import io.reactivex.Flowable
 interface RepoDao {
 
     @Query("SELECT * FROM Repo")
-    fun getAllRepos() : LiveData<List<RepositoryResponseModel>>
+    fun getAllRepos(): LiveData<List<RepositoryResponseModel>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(repoList: List<RepositoryResponseModel>)

@@ -15,14 +15,14 @@ import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
-class RepoAdapter(val context : Context,val repoList : List<RepositoryResponseModel>)
-    : RecyclerView.Adapter<RepoAdapter.RepoViewHolder>() {
+class RepoAdapter(val context: Context, val repoList: List<RepositoryResponseModel>) :
+    RecyclerView.Adapter<RepoAdapter.RepoViewHolder>() {
 
     private var checkedPosition = -1
 
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RepoViewHolder{
-        val binding : SingleItemModelLayoutBinding = DataBindingUtil.inflate(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RepoViewHolder {
+        val binding: SingleItemModelLayoutBinding = DataBindingUtil.inflate(
             LayoutInflater.from(parent.context),
             R.layout.single_item_model_layout, parent, false
         )
@@ -33,12 +33,14 @@ class RepoAdapter(val context : Context,val repoList : List<RepositoryResponseMo
         return repoList.size
     }
 
-    override fun onBindViewHolder(holder: RepoViewHolder,position : Int){
+    override fun onBindViewHolder(holder: RepoViewHolder, position: Int) {
         val repo = repoList[position]
         holder.itemModelLayoutBinding.repo = repo
-        if(!repo.languageColor.isNullOrEmpty())
-        holder.itemModelLayoutBinding.circleView.drawable.setColorFilter(Color.parseColor(repo.languageColor),PorterDuff.Mode.MULTIPLY)
-        //holder..setColorFilter(0xff00ff00, PorterDuff.Mode.MULTIPLY );
+        if (!repo.languageColor.isNullOrEmpty())
+            holder.itemModelLayoutBinding.circleView.drawable.setColorFilter(
+                Color.parseColor(repo.languageColor),
+                PorterDuff.Mode.MULTIPLY
+            )
 
         if (checkedPosition == position) {
             holder.itemModelLayoutBinding.repoDetailsTextview.visibility = View.VISIBLE
@@ -47,12 +49,12 @@ class RepoAdapter(val context : Context,val repoList : List<RepositoryResponseMo
             holder.itemModelLayoutBinding.repoDetailsTextview.visibility = View.GONE
             holder.itemModelLayoutBinding.repoDetailsLayout.visibility = View.GONE
         }
-        holder.itemModelLayoutBinding.root.setOnClickListener{
+        holder.itemModelLayoutBinding.root.setOnClickListener {
 
             if (checkedPosition != position) {
                 notifyDataSetChanged();
                 checkedPosition = position;
-            }else{
+            } else {
                 holder.itemModelLayoutBinding.repoDetailsTextview.visibility = View.GONE
                 holder.itemModelLayoutBinding.repoDetailsLayout.visibility = View.GONE
                 checkedPosition = -1
@@ -64,10 +66,8 @@ class RepoAdapter(val context : Context,val repoList : List<RepositoryResponseMo
         return repoList[position].id.toLong()
     }
 
-    inner class RepoViewHolder(val itemModelLayoutBinding: SingleItemModelLayoutBinding)
-        : RecyclerView.ViewHolder(itemModelLayoutBinding.root)
-
-
+    inner class RepoViewHolder(val itemModelLayoutBinding: SingleItemModelLayoutBinding) :
+        RecyclerView.ViewHolder(itemModelLayoutBinding.root)
 
 
 }

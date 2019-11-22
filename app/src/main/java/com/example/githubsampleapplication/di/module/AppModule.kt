@@ -8,11 +8,11 @@ import javax.inject.Singleton
 
 
 @Module
-class AppModule{
+class AppModule {
 
     @Provides
     @Singleton
-    fun provideContext(app : Application) : Context {
+    fun provideContext(app: Application): Context {
         return app.applicationContext
     }
 

@@ -14,7 +14,8 @@ class GithubSampleApplication : DaggerApplication() {
     lateinit var appComponent: AppComponent
 
     override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
-        appComponent = DaggerAppComponent.builder().application(this).baseUrl(Constants.baseUrl).build()
+        appComponent =
+            DaggerAppComponent.builder().application(this).baseUrl(Constants.baseUrl).build()
         val factory: AppWorkerFactory = appComponent.factory()
         WorkManager.initialize(this, Configuration.Builder().setWorkerFactory(factory).build())
         return appComponent

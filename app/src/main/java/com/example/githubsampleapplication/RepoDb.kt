@@ -7,6 +7,6 @@ import com.example.githubsampleapplication.model.RepositoryResponseModel
 
 @Database(entities = [(RepositoryResponseModel::class)], version = 1)
 @TypeConverters(BuiltByTypeConverter::class)
-abstract class RepoDb : RoomDatabase(){
-    abstract fun getRepoDao() : RepoDao
+abstract class RepoDb : RoomDatabase() {
+    abstract fun getRepoDao(): RepoDao
 }

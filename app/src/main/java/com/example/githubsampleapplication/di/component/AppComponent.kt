@@ -15,7 +15,7 @@ import javax.inject.Singleton
 @Singleton
 @Component(
     modules = [AndroidSupportInjectionModule::class, ActivityBuilderModule::class,
-        AppModule::class, ApiModule::class,DatabaseModule::class,ViewModelFactoryModule::class,
+        AppModule::class, ApiModule::class, DatabaseModule::class, ViewModelFactoryModule::class,
         AppAssistedInjectModule::class, WorkerBindingModule::class]
 )
 interface AppComponent : AndroidInjector<GithubSampleApplication> {
@@ -32,6 +32,5 @@ interface AppComponent : AndroidInjector<GithubSampleApplication> {
     }
 
     fun factory(): AppWorkerFactory
-
 
 }

@@ -32,8 +32,8 @@ class MainActivity : DaggerAppCompatActivity() {
 
     private lateinit var shimmerFrameLayout: ShimmerFrameLayout
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    private lateinit var errorView : ConstraintLayout
-    private lateinit var retryButton : Button
+    private lateinit var errorView: ConstraintLayout
+    private lateinit var retryButton: Button
     private val TAG = MainActivity::class.java.simpleName
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,9 +74,9 @@ class MainActivity : DaggerAppCompatActivity() {
             shimmerFrameLayout.visibility = View.GONE;
             swipeRefreshLayout.isRefreshing = false
 
-            if(it){
+            if (it) {
                 errorView.visibility = View.VISIBLE
-            }else{
+            } else {
                 errorView.visibility = View.GONE
             }
         })

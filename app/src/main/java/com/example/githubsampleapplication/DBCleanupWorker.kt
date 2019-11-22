@@ -16,7 +16,7 @@ class DBCleanupWorker @AssistedInject constructor(
 ) : RxWorker(appContext, params) {
 
     override fun createWork(): Single<Result> {
-        Log.i(DBCleanupWorker::class.java.simpleName,repoDao.hashCode().toString())
+        Log.i(DBCleanupWorker::class.java.simpleName, repoDao.hashCode().toString())
         return Single.fromCallable { repoDao.deleteAll() }
             .map { Result.success() }
             .onErrorReturn { Result.retry() }

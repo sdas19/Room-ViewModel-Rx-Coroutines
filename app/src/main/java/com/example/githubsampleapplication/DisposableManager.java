@@ -1,6 +1,7 @@
 package com.example.githubsampleapplication;
 
 import android.util.Log;
+
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
@@ -10,12 +11,12 @@ public class DisposableManager {
     private static CompositeDisposable compositeDisposable;
 
     public static void add(Disposable disposable) {
-        Log.e(TAG,"add");
+        Log.e(TAG, "add");
         getCompositeDisposable().add(disposable);
     }
 
     public static void dispose() {
-        Log.e(TAG,"dispose");
+        Log.e(TAG, "dispose");
         getCompositeDisposable().dispose();
     }
 
@@ -26,6 +27,7 @@ public class DisposableManager {
         return compositeDisposable;
     }
 
-    private DisposableManager() {}
+    private DisposableManager() {
+    }
 
 }
