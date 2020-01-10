@@ -12,12 +12,12 @@ import io.reactivex.Single
 class DBCleanupWorker @AssistedInject constructor(
     @Assisted private val appContext: Context,
     @Assisted private val params: WorkerParameters,
-    private val repoDao: RepoDao
+    private val repositoryDao: RepositoryDao
 ) : RxWorker(appContext, params) {
 
     override fun createWork(): Single<Result> {
-        Log.i(DBCleanupWorker::class.java.simpleName, repoDao.hashCode().toString())
-        return Single.fromCallable { repoDao.deleteAll() }
+        Log.i(DBCleanupWorker::class.java.simpleName, repositoryDao.hashCode().toString())
+        return Single.fromCallable { repositoryDao.deleteAll() }
             .map { Result.success() }
             .onErrorReturn { Result.retry() }
     }

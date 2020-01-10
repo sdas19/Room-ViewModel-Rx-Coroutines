@@ -11,7 +11,7 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class MainActivityViewModel
-@Inject constructor(val apiClient: ApiClient, val repoDao: RepoDao) : ViewModel() {
+@Inject constructor(val apiClient: ApiClient, val repositoryDao: RepositoryDao) : ViewModel() {
 
     private val TAG = MainActivityViewModel::class.java.simpleName
     internal var errorOccured = MutableLiveData<Boolean>().default(false)
@@ -20,8 +20,8 @@ class MainActivityViewModel
         addToDisposable(
             apiClient.getRepositoryResponse().subscribeOn(Schedulers.io())
                 .flatMap { repoList ->
-                    repoDao.deleteAll()
-                    repoDao.insertAll(repoList)
+                    repositoryDao.deleteAll()
+                    repositoryDao.insertAll(repoList)
                     Single.just(repoList)
                 }
                 .subscribe(
@@ -47,7 +47,7 @@ class MainActivityViewModel
     }
 
     internal fun getRepoFromDb(): LiveData<List<RepositoryResponseModel>> {
-        return repoDao.getAllRepos()
+        return repositoryDao.getAllRepos()
     }
 
     override fun onCleared() {

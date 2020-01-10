@@ -11,7 +11,7 @@ import com.example.githubsampleapplication.BuiltByTypeConverter
 import com.example.githubsampleapplication.R
 import de.hdodenhof.circleimageview.CircleImageView
 
-@Entity(tableName = "Repo")
+@Entity(tableName = "Repository")
 data class RepositoryResponseModel(
     @PrimaryKey(autoGenerate = true)
     @SerializedName("id") @ColumnInfo(name = "id") var id: Int = 0,
@@ -27,5 +27,4 @@ data class RepositoryResponseModel(
     @SerializedName("currentPeriodStars") @ColumnInfo(name = "currentPeriodStars") var currentPeriodStars: Int?,
     @TypeConverters(BuiltByTypeConverter::class)
     @SerializedName("builtBy") @ColumnInfo(name = "builtBy") var builtBy: List<BuiltByResponseModel>?
-
 )

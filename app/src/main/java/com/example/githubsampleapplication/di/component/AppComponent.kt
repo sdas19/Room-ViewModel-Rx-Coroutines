@@ -31,6 +31,6 @@ interface AppComponent : AndroidInjector<GithubSampleApplication> {
         fun build(): AppComponent
     }
 
-    fun factory(): AppWorkerFactory
+    fun factory():  AppWorkerFactory
 
 }

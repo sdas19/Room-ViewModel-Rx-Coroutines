@@ -14,20 +14,17 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.work.*
 import com.example.githubsampleapplication.DBCleanupWorker
 import com.example.githubsampleapplication.Factory.ViewModelFactory
+import com.example.githubsampleapplication.JoinTest.Repo
+import com.example.githubsampleapplication.JoinTest.User
+import com.example.githubsampleapplication.JoinTest.UserRepoJoin
 import com.example.githubsampleapplication.R
 import com.example.githubsampleapplication.RepoAdapter
-import com.example.githubsampleapplication.RepoDao
+import com.example.githubsampleapplication.RepoDb
 import com.example.githubsampleapplication.databinding.ActivityMainBinding
 import com.facebook.shimmer.ShimmerFrameLayout
 import dagger.android.support.DaggerAppCompatActivity
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import android.view.LayoutInflater
-import androidx.appcompat.app.ActionBar
-import androidx.core.app.ComponentActivity.ExtraData
-import androidx.core.content.ContextCompat.getSystemService
-
-
 
 
 class MainActivity : DaggerAppCompatActivity() {
@@ -35,6 +32,9 @@ class MainActivity : DaggerAppCompatActivity() {
     private lateinit var mainActivityViewModel: MainActivityViewModel
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
+
+    @Inject
+    lateinit var repoDb: RepoDb
 
     private lateinit var shimmerFrameLayout: ShimmerFrameLayout
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
@@ -101,8 +101,7 @@ class MainActivity : DaggerAppCompatActivity() {
         }
 
         createDbCleanupWorkRequest()
-
-
+        roomJoinTest()
     }
 
     public override fun onResume() {
@@ -113,6 +112,46 @@ class MainActivity : DaggerAppCompatActivity() {
     override fun onPause() {
         shimmerFrameLayout.stopShimmerAnimation()
         super.onPause()
+    }
+
+    private fun roomJoinTest() {
+        val userList: MutableList<User> = ArrayList()
+        userList.add(User(1, "Soumyajit"))
+        userList.add(User(2, "Rimlee"))
+        val repoList: MutableList<Repo> = ArrayList()
+        repoList.add(Repo(1, "workmanager poc", "https://workmanager.com"))
+        repoList.add(Repo(2, "livedata poc", "https://livedata.com"))
+        repoList.add(Repo(3, "dagger poc", "https://dagger.com"))
+        repoList.add(Repo(4, "room poc", "https://room.com"))
+        repoList.add(Repo(5, "multibinding poc", "https://multibinding.com"))
+        val userRepoJoinList: MutableList<UserRepoJoin> = ArrayList()
+        userRepoJoinList.add(UserRepoJoin(1, 4))
+        userRepoJoinList.add(UserRepoJoin(1, 2))
+        userRepoJoinList.add(UserRepoJoin(2, 5))
+        userRepoJoinList.add(UserRepoJoin(2, 4))
+        userRepoJoinList.add(UserRepoJoin(2, 1))
+        userRepoJoinList.add(UserRepoJoin(2, 3))
+
+        repoDb.getUserDao().insertUsers(userList)
+        repoDb.getRepoDao().insertRepos(repoList)
+        repoDb.getUserRepoJoinDao().insert(userRepoJoinList)
+
+        repoDb.getUserRepoJoinDao().getUsersForRepository(1).observe(this, Observer {
+            Log.i(TAG, "getUsersForRepository1 $it")
+        })
+
+        repoDb.getUserRepoJoinDao().getUsersForRepository(4).observe(this, Observer {
+            Log.i(TAG, "getUsersForRepository4 $it")
+        })
+
+        repoDb.getUserRepoJoinDao().getRepositoriesForUsers(2).observe(this, Observer {
+            Log.i(TAG, "getRepositoriesForUser2 $it")
+        })
+
+        repoDb.getUserRepoJoinDao().getRepositoriesForUsers(1).observe(this, Observer {
+            Log.i(TAG, "getRepositoriesForUser1 $it")
+        })
+
     }
 
     private fun createDbCleanupWorkRequest() {

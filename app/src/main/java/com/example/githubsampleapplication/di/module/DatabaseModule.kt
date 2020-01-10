@@ -4,7 +4,7 @@ import android.app.Application
 import dagger.Provides
 import javax.inject.Singleton
 import androidx.room.Room
-import com.example.githubsampleapplication.RepoDao
+import com.example.githubsampleapplication.RepositoryDao
 import com.example.githubsampleapplication.RepoDb
 import dagger.Module
 
@@ -20,13 +20,15 @@ class DatabaseModule {
             application,
             RepoDb::class.java,
             dBName
-        ).fallbackToDestructiveMigration().build()
+        ).fallbackToDestructiveMigration()
+            .allowMainThreadQueries()
+            .build()
     }
 
     @Singleton
     @Provides
-    fun provideRepoDao(db: RepoDb): RepoDao {
-        return db.getRepoDao()
+    fun provideRepoDao(db: RepoDb): RepositoryDao {
+        return db.getRepositoryDao()
     }
 
 }

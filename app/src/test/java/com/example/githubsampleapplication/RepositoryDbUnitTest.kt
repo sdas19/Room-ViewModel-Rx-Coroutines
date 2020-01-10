@@ -58,14 +58,14 @@ class RepositoryDbUnitTest {
         )
         repositoryList.add(repository)
 
-        repositoryDB.getRepoDao().insertAll(repositoryList)
-        val repositoryListFromDB = repositoryDB.getRepoDao().getAllRepos()
+        repositoryDB.getRepositoryDao().insertAll(repositoryList)
+        val repositoryListFromDB = repositoryDB.getRepositoryDao().getAllRepos()
 
         assertNotNull(repositoryListFromDB)
-        assertEquals(1, LiveDataTestUtil.getValue(repositoryDB.getRepoDao().getAllRepos()).size)
+        assertEquals(1, LiveDataTestUtil.getValue(repositoryDB.getRepositoryDao().getAllRepos()).size)
         assertEquals(
             "graceavery",
-            LiveDataTestUtil.getValue(repositoryDB.getRepoDao().getAllRepos())[0].author
+            LiveDataTestUtil.getValue(repositoryDB.getRepositoryDao().getAllRepos())[0].author
         )
     }
 
@@ -87,9 +87,9 @@ class RepositoryDbUnitTest {
         )
 
         repositoryList.add(repository)
-        repositoryDB.getRepoDao().deleteAll()
+        repositoryDB.getRepositoryDao().deleteAll()
 
-        assertEquals(0, LiveDataTestUtil.getValue(repositoryDB.getRepoDao().getAllRepos()).size)
+        assertEquals(0, LiveDataTestUtil.getValue(repositoryDB.getRepositoryDao().getAllRepos()).size)
 
     }
 

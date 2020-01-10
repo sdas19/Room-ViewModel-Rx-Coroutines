@@ -34,14 +34,14 @@ class MainActivityViewModelTest {
     @Mock
     lateinit var apiClient: ApiClient
     @Mock
-    lateinit var repoDao: RepoDao
+    lateinit var repositoryDao: RepositoryDao
     private lateinit var mainActivityViewModel: MainActivityViewModel
     private val observer: Observer<Boolean> = mock()
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        mainActivityViewModel = MainActivityViewModel(apiClient, repoDao)
+        mainActivityViewModel = MainActivityViewModel(apiClient, repositoryDao)
         mainActivityViewModel.errorOccured.observeForever(observer)
     }
 

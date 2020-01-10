@@ -9,15 +9,15 @@ import com.example.githubsampleapplication.model.RepositoryResponseModel
 import io.reactivex.Flowable
 
 @Dao
-interface RepoDao {
+interface RepositoryDao {
 
-    @Query("SELECT * FROM Repo")
+    @Query("SELECT * FROM Repository")
     fun getAllRepos(): LiveData<List<RepositoryResponseModel>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(repoList: List<RepositoryResponseModel>)
 
-    @Query("DELETE FROM Repo")
+    @Query("DELETE FROM Repository")
     fun deleteAll()
 
 }
