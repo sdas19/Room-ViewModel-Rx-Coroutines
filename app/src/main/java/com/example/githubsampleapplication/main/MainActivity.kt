@@ -68,8 +68,10 @@ class MainActivity : DaggerAppCompatActivity() {
                 val adapter = RepoAdapter(this@MainActivity, it)
                 adapter.setHasStableIds(true)
                 binding.repoRecyclerview.adapter = adapter
-            } else
+            } else {
+                swipeRefreshLayout.isRefreshing = true
                 mainActivityViewModel.makeRepoApiCall()
+            }
 
         })
 

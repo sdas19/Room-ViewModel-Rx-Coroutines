@@ -24,18 +24,32 @@ class MainActivityViewModel
     private val coroutineScope = CoroutineScope(Dispatchers.IO + completableJob)*/
 
     internal fun makeRepoApiCall() {
+        Log.d(TAG, "b4 Thread - ${Thread.currentThread().name}")
         viewModelScope.launch(Dispatchers.IO) {
-            apiClient.getRepositoryResponse().let { repoList ->
-                repoDao.deleteAll()
-                repoDao.insertAll(repoList)
-                if (!repoList.isNullOrEmpty()) {
-                    changeErrorState(false)
-                    Log.i(TAG, repoList.toString())
-                } else {
+            Log.d(TAG, "inside Thread - ${Thread.currentThread().name}")
+            val repositoryResponse = safeApiCall(
+                call = {apiClient.getRepositoryResponse()},
+                errorMessage = "Error Fetching Repository"
+            )
+            when(repositoryResponse){
+                is Result.Success -> {
+                    val repoList = repositoryResponse.data
+                    repoDao.deleteAll()
+                    repoDao.insertAll(repoList)
+                    if (!repoList.isNullOrEmpty()) {
+                        changeErrorState(false)
+                        Log.i(TAG, repoList.toString())
+                    } else {
+                        changeErrorState((true))
+                    }
+                }
+                is Result.Error -> {
                     changeErrorState((true))
+                    Log.d(TAG, "Exception - ${repositoryResponse.exception}")
                 }
             }
         }
+        Log.d(TAG, "after Thread - ${Thread.currentThread().name}")
     }
 
     fun changeErrorState(isError: Boolean) {
