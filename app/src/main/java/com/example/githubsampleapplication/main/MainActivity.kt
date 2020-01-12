@@ -28,8 +28,6 @@ import androidx.core.app.ComponentActivity.ExtraData
 import androidx.core.content.ContextCompat.getSystemService
 
 
-
-
 class MainActivity : DaggerAppCompatActivity() {
 
     private lateinit var mainActivityViewModel: MainActivityViewModel
@@ -62,7 +60,6 @@ class MainActivity : DaggerAppCompatActivity() {
             ViewModelProviders.of(this, viewModelFactory).get(MainActivityViewModel::class.java)
 
         mainActivityViewModel.getRepoFromDb().observe(this, Observer {
-
             Log.d(TAG, it.toString())
             if (!it.isNullOrEmpty()) {
                 shimmerFrameLayout.stopShimmerAnimation();
@@ -73,7 +70,6 @@ class MainActivity : DaggerAppCompatActivity() {
                 binding.repoRecyclerview.adapter = adapter
             } else
                 mainActivityViewModel.makeRepoApiCall()
-
 
         })
 

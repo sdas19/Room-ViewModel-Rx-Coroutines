@@ -4,10 +4,12 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.githubsampleapplication.*
 import com.example.githubsampleapplication.model.RepositoryResponseModel
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.*
 import javax.inject.Inject
 
 class MainActivityViewModel
@@ -16,31 +18,28 @@ class MainActivityViewModel
     private val TAG = MainActivityViewModel::class.java.simpleName
     internal var errorOccured = MutableLiveData<Boolean>().default(false)
 
+    //CoroutineContext: one way of creating viewmodel scope by using a new job
+    // and use its context and then in oncleared cancel the job to avoid leaking
+    /*private val completableJob = Job()
+    private val coroutineScope = CoroutineScope(Dispatchers.IO + completableJob)*/
+
     internal fun makeRepoApiCall() {
-        addToDisposable(
-            apiClient.getRepositoryResponse().subscribeOn(Schedulers.io())
-                .flatMap { repoList ->
-                    repoDao.deleteAll()
-                    repoDao.insertAll(repoList)
-                    Single.just(repoList)
+        viewModelScope.launch(Dispatchers.IO) {
+            apiClient.getRepositoryResponse().let { repoList ->
+                repoDao.deleteAll()
+                repoDao.insertAll(repoList)
+                if (!repoList.isNullOrEmpty()) {
+                    changeErrorState(false)
+                    Log.i(TAG, repoList.toString())
+                } else {
+                    changeErrorState((true))
                 }
-                .subscribe(
-                    { list ->
-                        if(!list.isNullOrEmpty()) {
-                            changeErrorState(false)
-                            Log.i(TAG, list.toString())
-                        }
-                    },
-                    { error ->
-                        changeErrorState((true))
-                        Log.i(TAG, error?.message)
-                    }
-                )
-        )
+            }
+        }
     }
 
-    fun changeErrorState(isError : Boolean){
-        if(isError)
+    fun changeErrorState(isError: Boolean) {
+        if (isError)
             errorOccured.postValue(true)
         else
             errorOccured.postValue(false)
@@ -53,5 +52,6 @@ class MainActivityViewModel
     override fun onCleared() {
         super.onCleared()
         removeAllDisposables()
+        //completableJob.cancel()
     }
 }

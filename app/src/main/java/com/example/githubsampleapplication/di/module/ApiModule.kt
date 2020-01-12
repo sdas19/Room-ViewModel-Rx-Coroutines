@@ -52,7 +52,6 @@ class ApiModule() {
 
         return Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create(gson))
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .baseUrl(baseUrl)
             .client(okHttpClient)
             .build()
