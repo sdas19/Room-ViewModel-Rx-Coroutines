@@ -23,6 +23,7 @@ import dagger.android.support.DaggerAppCompatActivity
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import android.view.LayoutInflater
+import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.core.app.ComponentActivity.ExtraData
 import androidx.core.content.ContextCompat.getSystemService
@@ -43,7 +44,7 @@ class MainActivity : DaggerAppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        Toast.makeText(this,"MainActivity",Toast.LENGTH_LONG).show()
         val binding =
             DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
 
