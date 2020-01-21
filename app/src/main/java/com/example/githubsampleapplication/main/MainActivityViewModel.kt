@@ -7,8 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.githubsampleapplication.*
 import com.example.githubsampleapplication.model.RepositoryResponseModel
-import io.reactivex.Single
-import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.*
 import javax.inject.Inject
 
