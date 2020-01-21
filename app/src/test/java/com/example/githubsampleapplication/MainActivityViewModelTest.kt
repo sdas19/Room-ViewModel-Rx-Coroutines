@@ -5,19 +5,26 @@ import androidx.lifecycle.Observer
 import com.example.githubsampleapplication.main.MainActivityViewModel
 import com.example.githubsampleapplication.model.BuiltByResponseModel
 import com.example.githubsampleapplication.model.RepositoryResponseModel
-import io.reactivex.Single
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.whenever
 import junit.framework.Assert.assertEquals
+import kotlinx.coroutines.*
 import org.junit.Assert.assertNotNull
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
 import org.junit.rules.TestRule
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
-import org.mockito.MockitoAnnotations
 import org.mockito.Mock
-import org.mockito.Mockito.*
-import java.net.SocketException
-import org.junit.*
+import org.mockito.Mockito.`when`
+import org.mockito.Mockito.mock
+import org.mockito.MockitoAnnotations
+import retrofit2.HttpException
+import retrofit2.Response
 
 
+@ExperimentalCoroutinesApi
 @RunWith(JUnit4::class)
 class MainActivityViewModelTest {
 
@@ -25,11 +32,9 @@ class MainActivityViewModelTest {
     @JvmField
     var rule: TestRule = InstantTaskExecutorRule()
 
-    companion object {
-        @ClassRule
-        @JvmField
-        val schedulers = RxImmediateSchedulerRule()
-    }
+    @Rule
+    @JvmField
+    var testCoroutineRule = TestCoroutineRule()
 
     @Mock
     lateinit var apiClient: ApiClient
@@ -38,64 +43,70 @@ class MainActivityViewModelTest {
     private lateinit var mainActivityViewModel: MainActivityViewModel
     private val observer: Observer<Boolean> = mock()
 
+
     @Before
+    @ObsoleteCoroutinesApi
+    @ExperimentalCoroutinesApi
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        mainActivityViewModel = MainActivityViewModel(apiClient, repoDao)
+        mainActivityViewModel =
+            MainActivityViewModel(apiClient, repoDao, TestCoroutineContextProvider())
         mainActivityViewModel.errorOccured.observeForever(observer)
     }
 
     @Test
-    fun testApiFetchDataSuccess() {
+    fun testApiFetchDataSuccess() = runBlocking {
 
         // Mock API proper response
 
-        val repositoryList: MutableList<RepositoryResponseModel> = ArrayList()
-        val builtByList: MutableList<BuiltByResponseModel> = ArrayList()
-        builtByList.add(
-            BuiltByResponseModel(
-                "graceavery", "https://github.com/graceavery",
-                "https://avatars2.githubusercontent.com/u/5048800"
+        testCoroutineRule.runBlockingTest {
+            val repositoryList: MutableList<RepositoryResponseModel> = ArrayList()
+            val builtByList: MutableList<BuiltByResponseModel> = ArrayList()
+            builtByList.add(
+                BuiltByResponseModel(
+                    "graceavery", "https://github.com/graceavery",
+                    "https://avatars2.githubusercontent.com/u/5048800"
+                )
             )
-        )
-        val repository = RepositoryResponseModel(
-            1, "graceavery", "tamagotchiTemp", "https://github.com/graceavery.png",
-            "https://github.com/graceavery/tamagotchiTemp", "", "", "",
-            595, 25, 76, builtByList
-        )
-        repositoryList.add(repository)
+            val repository = RepositoryResponseModel(
+                1, "graceavery", "tamagotchiTemp", "https://github.com/graceavery.png",
+                "https://github.com/graceavery/tamagotchiTemp", "", "", "",
+                595, 25, 76, builtByList
+            )
+            repositoryList.add(repository)
+            val expectedResponse = Response.success(repositoryList as List<RepositoryResponseModel>)
 
-        `when`(apiClient.getRepositoryResponse()).thenAnswer {
-            return@thenAnswer Single.just(repositoryList)
+            `when`(apiClient.getRepositoryResponse()).thenReturn(expectedResponse)
+
+            val observer = mock(Observer::class.java) as Observer<Boolean>
+
+            mainActivityViewModel.errorOccured.observeForever(observer)
+            mainActivityViewModel.makeRepoApiCall()
+
+            assertNotNull(mainActivityViewModel.errorOccured.value)
+            assertEquals(false, mainActivityViewModel.errorOccured.value)
         }
-
-        val observer = mock(Observer::class.java) as Observer<Boolean>
-
-        this.mainActivityViewModel.errorOccured.observeForever(observer)
-        this.mainActivityViewModel.makeRepoApiCall()
-
-        assertNotNull(this.mainActivityViewModel.errorOccured.value)
-        assertEquals(false, this.mainActivityViewModel.errorOccured.value)
     }
 
 
     @Test
-    fun testApiFetchDataError() {
+    fun testApiFetchDataError() = runBlocking {
 
         // Mock API error response
 
-        `when`(apiClient.getRepositoryResponse()).thenAnswer {
-            return@thenAnswer Single.error<SocketException>(SocketException("Api error"))
+        testCoroutineRule.runBlockingTest {
+            val mockException: HttpException = mock()
+            whenever(mockException.code()).thenReturn(401)
+            `when`(apiClient.getRepositoryResponse()).thenThrow(mockException)
+
+            val observer = mock(Observer::class.java) as Observer<Boolean>
+            mainActivityViewModel.errorOccured.observeForever(observer)
+            mainActivityViewModel.makeRepoApiCall()
+
+            assertNotNull(mainActivityViewModel.errorOccured.value)
+            assertEquals(true, mainActivityViewModel.errorOccured.value)
         }
 
-        val observer = mock(Observer::class.java) as Observer<Boolean>
-
-        this.mainActivityViewModel.errorOccured.observeForever(observer)
-        this.mainActivityViewModel.makeRepoApiCall()
-
-        assertNotNull(this.mainActivityViewModel.errorOccured.value)
-        assertEquals(true, this.mainActivityViewModel.errorOccured.value)
     }
-
 
 }

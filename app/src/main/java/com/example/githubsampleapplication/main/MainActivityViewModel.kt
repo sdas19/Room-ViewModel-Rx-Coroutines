@@ -6,12 +6,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.githubsampleapplication.*
+import com.example.githubsampleapplication.di.module.CoroutineContextProvider
 import com.example.githubsampleapplication.model.RepositoryResponseModel
 import kotlinx.coroutines.*
 import javax.inject.Inject
 
 class MainActivityViewModel
-@Inject constructor(val apiClient: ApiClient, val repoDao: RepoDao) : ViewModel() {
+@Inject constructor(val apiClient: ApiClient, val repoDao: RepoDao,
+                    val contextProvider : CoroutineContextProvider) : ViewModel() {
 
     private val TAG = MainActivityViewModel::class.java.simpleName
     internal var errorOccured = MutableLiveData<Boolean>().default(false)
@@ -23,7 +25,7 @@ class MainActivityViewModel
 
     internal fun makeRepoApiCall() {
         Log.d(TAG, "b4 Thread - ${Thread.currentThread().name}")
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(contextProvider.IO) {
             Log.d(TAG, "inside Thread - ${Thread.currentThread().name}")
             val repositoryResponse = safeApiCall(
                 call = {apiClient.getRepositoryResponse()},
