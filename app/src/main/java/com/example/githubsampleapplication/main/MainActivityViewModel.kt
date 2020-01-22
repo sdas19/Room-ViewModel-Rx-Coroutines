@@ -12,11 +12,18 @@ import kotlinx.coroutines.*
 import javax.inject.Inject
 
 class MainActivityViewModel
-@Inject constructor(val apiClient: ApiClient, val repoDao: RepoDao,
-                    val contextProvider : CoroutineContextProvider) : ViewModel() {
+@Inject constructor(
+    val apiClient: ApiClient, val repoDao: RepoDao,
+    val contextProvider: CoroutineContextProvider
+) : ViewModel() {
 
     private val TAG = MainActivityViewModel::class.java.simpleName
     internal var errorOccured = MutableLiveData<Boolean>().default(false)
+
+    private val handler = CoroutineExceptionHandler { _, exception ->
+        changeErrorState(true)
+        Log.d(TAG, "Exception - $exception")
+    }
 
     //CoroutineContext: one way of creating viewmodel scope by using a new job
     // and use its context and then in oncleared cancel the job to avoid leaking
@@ -25,14 +32,14 @@ class MainActivityViewModel
 
     internal fun makeRepoApiCall() {
         Log.d(TAG, "b4 Thread - ${Thread.currentThread().name}")
-        viewModelScope.launch(contextProvider.IO) {
-            Log.d(TAG, "inside Thread - ${Thread.currentThread().name}")
-            val repositoryResponse = safeApiCall(
-                call = {apiClient.getRepositoryResponse()},
-                errorMessage = "Error Fetching Repository"
-            )
-            when(repositoryResponse){
-                is Result.Success -> {
+        viewModelScope.launch(handler) {
+            withContext(contextProvider.IO) {
+                Log.d(TAG, "inside Thread - ${Thread.currentThread().name}")
+                val repositoryResponse = safeApiCall(
+                    call = { apiClient.getRepositoryResponse() },
+                    errorMessage = "Error Fetching Repository"
+                )
+                if (repositoryResponse is Result.Success) {
                     val repoList = repositoryResponse.data
                     repoDao.deleteAll()
                     repoDao.insertAll(repoList)
@@ -42,10 +49,6 @@ class MainActivityViewModel
                     } else {
                         changeErrorState((true))
                     }
-                }
-                is Result.Error -> {
-                    changeErrorState((true))
-                    Log.d(TAG, "Exception - ${repositoryResponse.exception}")
                 }
             }
         }

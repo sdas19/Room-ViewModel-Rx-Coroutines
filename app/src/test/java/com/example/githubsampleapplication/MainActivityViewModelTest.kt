@@ -5,8 +5,8 @@ import androidx.lifecycle.Observer
 import com.example.githubsampleapplication.main.MainActivityViewModel
 import com.example.githubsampleapplication.model.BuiltByResponseModel
 import com.example.githubsampleapplication.model.RepositoryResponseModel
+import com.nhaarman.mockitokotlin2.*
 import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.whenever
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.*
 import org.junit.Assert.assertNotNull
@@ -22,6 +22,7 @@ import org.mockito.Mockito.mock
 import org.mockito.MockitoAnnotations
 import retrofit2.HttpException
 import retrofit2.Response
+import java.lang.NullPointerException
 
 
 @ExperimentalCoroutinesApi
@@ -75,9 +76,9 @@ class MainActivityViewModelTest {
             )
             repositoryList.add(repository)
             val expectedResponse = Response.success(repositoryList as List<RepositoryResponseModel>)
-
-            `when`(apiClient.getRepositoryResponse()).thenReturn(expectedResponse)
-
+            apiClient.stub {
+                onBlocking { getRepositoryResponse() }.doReturn(expectedResponse)
+            }
             val observer = mock(Observer::class.java) as Observer<Boolean>
 
             mainActivityViewModel.errorOccured.observeForever(observer)
@@ -97,7 +98,10 @@ class MainActivityViewModelTest {
         testCoroutineRule.runBlockingTest {
             val mockException: HttpException = mock()
             whenever(mockException.code()).thenReturn(401)
-            `when`(apiClient.getRepositoryResponse()).thenThrow(mockException)
+
+            apiClient.stub {
+                onBlocking { getRepositoryResponse() }.doThrow(NullPointerException())
+            }
 
             val observer = mock(Observer::class.java) as Observer<Boolean>
             mainActivityViewModel.errorOccured.observeForever(observer)
